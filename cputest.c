@@ -77,12 +77,15 @@ static void run_test(char const *s)
 
 	exec = 1;
 
-	printf("\x1b[1;32m" __FILE__ "\x1b[0m: running \"%s\"\n", s);
+	unsigned long long ist_count = 0, cyc_count = 0;
 
-	while (exec)
+	printf(__FILE__ ": running \"%s\"\n", s);
+
+	for (; exec; cyc_count += cpu.cycles, ist_count++)
 		i8080_step(&cpu);
 
-	printf("\n\x1b[1;32m" __FILE__ "\x1b[0m: test done.\n\n");
+	printf("\n" __FILE__ ": %llu cycles, %llu instructions\n\n",
+		cyc_count, ist_count);
 }
 
 int main(void)
