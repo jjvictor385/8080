@@ -18,6 +18,8 @@ static void port_out(uint8_t port, uint8_t acc)
 		return;
 	}
 
+	printf("\x1b[1;32m");
+
 	switch (cpu.c) {
 	case 2:
 		putchar(cpu.e);
@@ -27,6 +29,8 @@ static void port_out(uint8_t port, uint8_t acc)
 			*s != '$'; s++)
 			putchar(*s);
 	}
+
+	printf("\x1b[0m");
 }
 
 static _Bool load_rom(char const *s)
@@ -84,7 +88,7 @@ static void run_test(char const *s)
 	for (; exec; cyc_count += cpu.cycles, ist_count++)
 		i8080_step(&cpu);
 
-	printf("\n" __FILE__ ": %llu cycles, %llu instructions\n\n",
+	printf("\n" __FILE__ ": %llu cycles, %llu instructions\n",
 		cyc_count, ist_count);
 }
 
@@ -108,6 +112,7 @@ int main(void)
 	run_test("roms/TST8080.COM");
 	run_test("roms/8080PRE.COM");
 	run_test("roms/CPUTEST.COM");
+	run_test("roms/8080EXM.COM");
 
 	free(cpu.memory);
 
