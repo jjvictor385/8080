@@ -18,8 +18,6 @@ static void port_out(uint8_t port, uint8_t acc)
 		return;
 	}
 
-	printf("\x1b[1;32m");
-
 	switch (cpu.c) {
 	case 2:
 		putchar(cpu.e);
@@ -29,8 +27,6 @@ static void port_out(uint8_t port, uint8_t acc)
 			*s != '$'; s++)
 			putchar(*s);
 	}
-
-	printf("\x1b[0m");
 }
 
 static _Bool load_rom(char const *s)

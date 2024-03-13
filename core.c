@@ -42,9 +42,9 @@ static inline void i8080_inx(uint8_t *rp, uint16_t v) {
 	rp[1] = value & 0xff;
 }
 
-#define HALF(op, x, y) (((((x) & 0xf) op ((y) & 0xf)) & 0x10) == 0x10)
-#define HALF_ADD(x, y) (((x & 0xf) + (y & 0xf)) > 0xf)
-#define HALF_SUB(x, y) ((x & 0xf) < (y & 0xf))
+#define HALF(x, y) (((x & 0xf) + (y & 0xf)) >> 4 & 1)
+#define HALF_ADD(x, y) HALF(x, y)
+#define HALF_SUB(x, y) HALF(x, -y)
 
 static inline void i8080_inr(i8080 *state, uint8_t *reg, uint8_t v) {
 	state->af = HALF_ADD(*reg, v);
@@ -143,9 +143,11 @@ static inline void i8080_cmp(i8080 *state, uint8_t byte) {
 }
 
 static inline void i8080_logical(i8080 *state, uint8_t op, uint8_t reg) {
+	state->af = 0;
 	switch (op) {
 	case 0x4:
 		// ANA
+		state->af = (state->a | reg) >> 3 & 1;
 		state->a &= reg;
 		break;
 	case 0x5:
@@ -681,6 +683,7 @@ void i8080_step(i8080 *state) {
 			state->cf = (state->a >> 4) + 6 > 0xf;
 			state->a = ((state->a >> 4) + 6) << 4 | (state->a & 0xf);
 		}
+		i8080_zsp(state, state->a);
 		break;
 	case 0xeb:
 		// XCHG
