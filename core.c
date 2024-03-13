@@ -42,9 +42,8 @@ static inline void i8080_inx(uint8_t *rp, uint16_t v) {
 	rp[1] = value & 0xff;
 }
 
-#define HALF(x, y) (((x & 0xf) + (y & 0xf)) >> 4 & 1)
-#define HALF_ADD(x, y) HALF(x, y)
-#define HALF_SUB(x, y) HALF(x, -y)
+#define HALF_ADD(x, y) ((x ^ (x + y) ^ y) >> 4 & 1)
+#define HALF_SUB(x, y) (~(x ^ (x - y) ^ y) >> 4 & 1)
 
 static inline void i8080_inr(i8080 *state, uint8_t *reg, uint8_t v) {
 	state->af = HALF_ADD(*reg, v);
